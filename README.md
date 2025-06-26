@@ -3,7 +3,7 @@ ALICIA is a custom GPT that uses RAG to help students access important informati
 
 ## Initial set-up (using macOS - for now):
 
-### Make sure you have an OpenAI API key. This should go inside /ALICIA_GPT_Model/.env . 
+### Make sure you have an OpenAI API key. This should go inside /ALICIA_GPT_Model/.env defined as PENAI_API_KEY={your key}
 
 ### 1. Rebuild env from scratch: in terminal:
 chmod +x environment_builder.sh
