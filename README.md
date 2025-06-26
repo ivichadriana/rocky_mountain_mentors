@@ -3,13 +3,17 @@ ALICIA is a custom GPT that uses RAG to help students access important informati
 
 ## Initial set-up (using macOS - for now):
 
-# 1. Rebuild env from scratch
+### Make sure you have an OpenAI API key. This should go inside /ALICIA_GPT_Model/.env . 
+
+### 1. Rebuild env from scratch: in terminal:
 chmod +x environment_builder.sh
 ./environment_builder.sh
 
-# 2. Activate environment
+### 2. Activate environment! (in terminal)
 conda activate rmm-llm                    
      
-# 3. Run the model; either Jupyter NB of Python script.
-python ALICIA.py or within ALICIA.ipynb               
+### 3. Run the model; either Jupyter NB of Python script (method of choice).
+python ALICIA.py or within ALICIA.ipynb
+
+### This will start ALICIA chatbot. ALICIA's customization can be found in rocky_mountain_mentors/data/rmm_corpus/agent_description.txt, and the resources.txt file contains the informaiton ALICIA accessed while answering.
      
