@@ -1,4 +1,4 @@
-# Rocky Mountain Mentors Cooproporation Presents: ALICIA
+# Rocky Mountain Mentors Presents: ALICIA
 ALICIA is a custom GPT that uses RAG to help students access important information.
 
 ## Initial set-up (using macOS - for now):
