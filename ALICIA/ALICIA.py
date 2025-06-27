@@ -245,7 +245,7 @@ TEXT_LIGHT= "#ffffff"
 
 # ───────────── Root window ─────────────
 root = tk.Tk()
-root.title("Rocky Mountain Mentor")
+root.title("Rocky Mountain Mentors 2025")
 root.configure(bg=WINDOW_BG)
 root.geometry("900x650")
 
