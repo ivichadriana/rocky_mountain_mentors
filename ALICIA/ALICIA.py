@@ -43,7 +43,7 @@ raw_text = CORPUS_PATH.read_text(encoding="utf-8")
 
 # naive split by double-newline; you can swap in langchain text splitters later
 passages = [p.strip() for p in raw_text.split("\n\n") if p.strip()]
-print(f"Loaded {len(passages)} passages.")
+print(f"Loading {len(passages)} passages from resources...")
 
 # %%
 # embed passages and build a FAISS index (runs once; cache if large)
@@ -64,7 +64,8 @@ print("dotenv found at:", find_dotenv())   # should show the absolute path
 
 load_dotenv(find_dotenv())                 # explicit path, avoids guesswork
 key = os.getenv("OPENAI_API_KEY")
-print("Key length:", len(key) if key else key)
+print("Reading key..."
+)
 assert key and key.startswith("sk-"), "OPENAI_API_KEY is missing or malformed!"
 
 # %% [markdown]
@@ -144,7 +145,7 @@ def build_prompt(user_message):
         "role": "assistant",
         "content": (
             "**Grounding data – you MUST base your answer ONLY on these excerpts. "
-            "If they don’t contain the answer, reply 'I don’t have that information.'**\n\n"
+            "If they don’t contain the answer, reply 'I don’t have that information, but I searched online and found {then search online and find a reliable source like the program website, find the anwert and return the answer AND your source link}.'**\n\n"
             + context)
     }
 
@@ -181,13 +182,6 @@ def chat(user_message, model="gpt-4o-mini"):
 # %%
 conversation.clear()
 student_profile.clear()
-
-print(chat("What program and year am I in?"))          # bot asks once
-print(chat("I'm an MS second-year student."))
-print(chat("So what minimum GPA do I need to graduate?"))
-
-# %% [markdown]
-# Quick sanity test
 
 # %%
 import re
@@ -315,7 +309,7 @@ chat_log.tag_configure("bot",  background=BOT_BG,  foreground=TEXT_LIGHT,
 chat_log.tag_configure("bubble_wrap", spacing1=5, spacing3=5)
 
 # Intro banner
-intro = ("Here to help! Ask me anything about the "
+intro = ("Hi I'm ALICIA. Here to help! Ask me anything about the "
          "program, mentorship, resources, and more. How can I help you today?")
 chat_log.insert(tk.END, f"╭──\n{intro}\n╰──\n", ("bot", "bubble_wrap"))
 chat_log.configure(state="disabled")    # lock it before normal use
@@ -357,5 +351,3 @@ entry.bind("<Return>", lambda e: send_query())
 
 # ───────────── Launch ─────────────
 root.mainloop()
-
-
