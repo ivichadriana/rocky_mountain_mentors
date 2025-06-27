@@ -1,4 +1,4 @@
-# Rocky Mountain Mentors — **ALICIA**
+# Rocky Mountain Mentors: **ALICIA**
 
 Academic Learning and Institutional Coaching Intelligent Assistant (ALICIA) is a Retrieval‑Augmented Generation (RAG)‑powered chatbot designed to help students quickly locate policies, schedules, and other institutional knowledge.
 
