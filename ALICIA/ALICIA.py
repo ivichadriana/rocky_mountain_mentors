@@ -145,7 +145,7 @@ def build_prompt(user_message):
         "role": "assistant",
         "content": (
             "**Grounding data – you MUST base your answer ONLY on these excerpts. "
-            "If they don’t contain the answer, reply 'I don’t have that information, but I searched online and found {then search online and find a reliable source like the program website, find the anwert and return the answer AND your source link}.'**\n\n"
+            "If they don’t contain the answer, reply 'I don’t have that information, but I searched online and found {then search online and find a reliable source like the program website, find the answer and return the answer AND your source link}. Everything should be specific to the University of Colorado Anschutz Medical Campus and Denver campus, as well as the student's current program and year.'**\n\n"
             + context)
     }
 
