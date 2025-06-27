@@ -91,6 +91,50 @@ to regenerate embeddings and include new content in future answers.
 
 ---
 
+## Contributing
+
+### New to Git & GitHub?
+
+If you're more comfortable using the web interface, click the **Edit** button on any file—GitHub will fork the repo automatically and guide you through submitting a Pull Request (PR).
+
+For a command‑line workflow:
+
+1. **Fork** this repository to your GitHub account.
+2. **Clone** your fork locally:
+
+```bash
+git clone https://github.com/<your‑username>/ALICIA_GPT_Model.git
+cd ALICIA_GPT_Model
+```
+
+3. *(Optional)* create a feature branch:
+
+```bash
+git checkout -b feature/my-improvement
+```
+
+4. **Make your changes**—common edits are in `data/rmm_corpus/resources.txt` or `agent_description.txt`.
+
+```bash
+git add resources.txt agent_description.txt
+git commit -m "Brief description of change"
+```
+
+5. **Push** the branch and open a PR:
+
+```bash
+git push --set-upstream origin feature/my-improvement
+```
+
+Helpful guides:
+
+* Cloning a repository: [https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
+* Creating a pull request: [https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request)
+
+We review PRs promptly—feel free to ask questions in your PR description.
+
+---
+
 ## Troubleshooting
 
 | Symptom                         | Likely Cause                 | Fix                                        |
