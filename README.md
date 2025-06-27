@@ -103,8 +103,8 @@ For a command‑line workflow:
 2. **Clone** your fork locally:
 
 ```bash
-git clone https://github.com/<your‑username>/ALICIA_GPT_Model.git
-cd ALICIA_GPT_Model
+git clone https://github.com/<your‑username>/rocky_mountain_mentors.git
+cd rocky_mountain_mentors
 ```
 
 3. *(Optional)* create a feature branch:
