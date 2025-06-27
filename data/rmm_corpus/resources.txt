@@ -2,14 +2,4 @@ This is the list of resources.
 bioengineering students should pass all classes with a minimum GPA of 3 to graduate.
 How do I pay for parking? You can sign up for parking by visiting the Parking, Transportation, and Maps website (https://www.cuanschutz.edu/offices/facilities-management/parking-transportation-maps/parking/permit-parking)
 Where is the Bioengineering department located? The Bioengineering department is located  on the first floor of Bioscience 2 at 12705 E Montview Blvd Suite 100, Aurora, CO 80045
-Denver Campus Office
-Department of Bioengineering,
-College of Engineering, Design and Computing
-1200 Larimer Street, NC-2204
-Denver, Colorado 80217
-Anschutz Medical Campus Office
-Center for Bioengineering, CU School of Medicine
-Anschutz Medical Campus, Bioscience 2
-12705 East Montview Blvd., Suite 100
-Aurora, CO 80045
-Phone: 303.724.5893
+This is the link to get all current information in faculty, class schedule: https://engineering.ucdenver.edu/bioengineering
