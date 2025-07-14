@@ -31,7 +31,9 @@ pip install --upgrade \
     openai \
     tiktoken \
     python-dotenv \
-    pillow
+    pillow \
+    markdown \
+    tkhtmlview 
 
 echo ""
 echo "Environment '$ENV_NAME' is ready."
