@@ -1,10 +1,8 @@
-# %% [markdown]
+
 # # Rocky Moutain Mentors: Using OpenAI's API for ALICIA: Academic Learning and Institutional Coaching Intelligent Assistant
 
-# %% [markdown]
-# The following notebook contains the code to run a demo showcasing our custom GPT for the Rocky Mountain Mentors cooproporation.
+# The following script contains the code to run a demo showcasing our custom GPT for the Rocky Mountain Mentors cooproporation.
 
-# %% [markdown]
 # ## Imports, paths and setting
 
 # %%
@@ -15,13 +13,24 @@ import openai
 import tiktoken
 import faiss
 import numpy as np
+import markdown, re
 from pathlib import Path
-
+from tkhtmlview import HTMLScrolledText     # instead of HTMLLabel
+import datetime as dt
+import os
+from dotenv import load_dotenv, find_dotenv
+import tkinter as tk
+from tkinter import ttk
+from tkinter.scrolledtext import ScrolledText
+from tkinter import font as tkfont
+from pathlib import Path
+from PIL import Image, ImageTk
+import threading
 
 load_dotenv()                           # grabs OPENAI_API_KEY from .env
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Path of the notebook’s parent folder …/rocky_mountain_mentors
+# Path of the script’s parent folder …/rocky_mountain_mentors
 PROJECT_ROOT = Path.cwd().parent
 
 CORPUS_PATH = PROJECT_ROOT / "data" / "rmm_corpus" / "resources.txt"
@@ -34,7 +43,6 @@ EMBED_MODEL = "text-embedding-3-small"  # fast & inexpensive; switch if needed
 TOKENIZER = tiktoken.encoding_for_model("gpt-4o")  # for length management
 MAX_TOKENS_CONTEXT = 3000               # adjust for your target model
 
-# %% [markdown]
 # ## Load & embed the corpus
 
 # %%
@@ -43,7 +51,7 @@ raw_text = CORPUS_PATH.read_text(encoding="utf-8")
 
 # naive split by double-newline; you can swap in langchain text splitters later
 passages = [p.strip() for p in raw_text.split("\n\n") if p.strip()]
-print(f"Loading {len(passages)} passages from resources...")
+print(f"Loaded {len(passages)} passages.")
 
 # %%
 # embed passages and build a FAISS index (runs once; cache if large)
@@ -58,17 +66,13 @@ index.add(emb_vectors)
 print("FAISS index ready:", index.ntotal, "vectors")
 
 # %%
-import os
-from dotenv import load_dotenv, find_dotenv
 print("dotenv found at:", find_dotenv())   # should show the absolute path
 
 load_dotenv(find_dotenv())                 # explicit path, avoids guesswork
 key = os.getenv("OPENAI_API_KEY")
-print("Reading key..."
-)
+print("Key length:", len(key) if key else key)
 assert key and key.startswith("sk-"), "OPENAI_API_KEY is missing or malformed!"
 
-# %% [markdown]
 #  Retrieval helper
 
 # %%
@@ -79,7 +83,6 @@ def retrieve(query, k=4):
     return [(passages[i], float(scores[0][j])) for j, i in enumerate(idxs[0])]
 
 
-# %% [markdown]
 # System prompt & conversation loop
 
 # %%
@@ -87,9 +90,6 @@ SYSTEM_DESC = AGENT_DESC_PATH.read_text(encoding="utf-8").strip()
 print("Loaded system prompt –", len(SYSTEM_DESC.split()), "words")
 
 # %%
-import re
-import datetime as dt
-
 # ---------- 1) persistent memory ---------- #
 student_profile = {}          # cleared each time you restart the process
 conversation    = []          # running message list
@@ -183,10 +183,9 @@ def chat(user_message, model="gpt-4o-mini"):
 conversation.clear()
 student_profile.clear()
 
-# %%
-import re
-import datetime as dt
+# Quick sanity test
 
+# %%
 # ---------- 1) persistent memory ---------- #
 student_profile = {}          # cleared each time you restart the process
 conversation    = []          # running message list
@@ -220,34 +219,24 @@ def parse_student_info(text):
                 break
     return prog, year
 
-# %% [markdown]
 # Minimal Tkinter front-end
 
 # %%
-#  Rocky Mountain Mentor UI (logo bigger, new banner text)
-import tkinter as tk
-from tkinter import ttk
-from tkinter.scrolledtext import ScrolledText
-from tkinter import font as tkfont
-from pathlib import Path
-from PIL import Image, ImageTk
-import threading
-
 # ───────────── Palette ─────────────
 HEADER_BG = "#3c6834"   # soft green
 WINDOW_BG = "#c5b78a"   # light gold
 CHAT_BG   = "#f9f5e9"   # creamy off-white
-USER_BG   = "#c5b78a"
-BOT_BG    = "#496d96"
+USER_BG = "#e9dfba"
+BOT_BG    = "#f9f5e9" 
 ACCENT    = "#a46d5e"
 TEXT_DARK = "#000000"
 TEXT_LIGHT= "#ffffff"
 
 # ───────────── Root window ─────────────
 root = tk.Tk()
-root.title("Rocky Mountain Mentors 2025")
+root.title("Rocky Mountain Mentors (2025)")
 root.configure(bg=WINDOW_BG)
-root.geometry("900x650")
+root.geometry("910x650")
 
 # ───────────── Font selection (after root exists) ─────────────
 available_fonts = set(tkfont.families(root))
@@ -285,34 +274,79 @@ if logo_path.exists():
     logo_img = logo_img.resize(new_size, Image.LANCZOS)
     logo_photo = ImageTk.PhotoImage(logo_img)
     tk.Label(header, image=logo_photo, bg=HEADER_BG)\
-      .pack(side="left", padx=10)
+      .pack(side="left", padx=20)
 
 TITLE_FONT = (base_font, 20, "bold")
 tk.Label(header, text="ALICIA: Academic Learning and Institutional Coaching Intelligent Assistant", font=TITLE_FONT,
          bg=HEADER_BG, fg=TEXT_DARK)\
-  .pack(side="left", padx=(0, 0))
+  .pack(side="left", padx=(0, 1))
 
 # ───────────── Chat area ─────────────
+
 chat_frame = ttk.Frame(root)
 chat_frame.pack(fill="both", expand=True, padx=15, pady=6)
 
-chat_log = ScrolledText(chat_frame, wrap="word", state="normal",
-                        bg=CHAT_BG, fg=TEXT_DARK, font=SYSTEM_FONT,
-                        borderwidth=0, relief="flat")
+chat_log = HTMLScrolledText(                # Markdown-aware widget
+    chat_frame,
+    html="",                                # start empty
+    background=CHAT_BG,                     # overall chat bg
+    font=SYSTEM_FONT,
+    fg=TEXT_DARK,
+    relief="flat", bd=0, width=150
+)
 chat_log.pack(fill="both", expand=True)
 
-# Bubble tags
-chat_log.tag_configure("user", background=USER_BG, foreground=TEXT_DARK,
-                       lmargin1=8, lmargin2=8, rmargin=8)
-chat_log.tag_configure("bot",  background=BOT_BG,  foreground=TEXT_LIGHT,
-                       lmargin1=8, lmargin2=8, rmargin=8)
-chat_log.tag_configure("bubble_wrap", spacing1=5, spacing3=5)
+# keep the whole transcript as one HTML string
+conversation_html = ""
+transcript = []          # list of tuples: (tag, md_text)
+def insert_bubble(md_text: str, tag: str):
+    transcript.append((tag, md_text))          # store raw data
 
-# Intro banner
-intro = ("Hi I'm ALICIA. Here to help! Ask me anything about the "
+    # ── rebuild the entire document every time ──
+    doc = ""
+    for who, md in transcript:
+        doc += _one_bubble_html(md, who)       # call helper that returns HTML
+
+    chat_log.set_html(doc)
+    chat_log.yview_moveto(1.0)
+
+MAX_W      = "60%"
+PAD_USER   = "8px 10px"
+GAP_USER   = "8px"
+GAP_BOT    = "3px"
+
+def _one_bubble_html(md_text: str, tag: str) -> str:
+    html = markdown.markdown(md_text,
+                             extensions=["fenced_code", "tables", "nl2br"])
+    html = re.sub(r"</?p[^>]*>", "", html, flags=re.S).replace("<br>", "")
+
+    if tag == "user":
+        return (
+            #  ▼ overflow:auto ⇒ new BFC ⇒ margins no longer collapse
+            f'<div style="margin:{GAP_USER} 0; overflow:auto;">'
+            f'  <div style="text-align:right;">'
+            f'    <span style="background-color:{USER_BG}; color:{TEXT_DARK}; '
+            f'          padding:{PAD_USER}; border-radius:10px; '
+            f'          display:inline-block; max-width:{MAX_W}; '
+            f'          font-family:{base_font}; font-size:15px; '
+            f'          line-height:1.35;">{html}</span>'
+            f'  </div>'
+            f'</div>'
+        )
+
+    # bot branch (unchanged)
+    return (
+        f'<div style="padding:{GAP_BOT} 0; text-align:left; '
+        f'            max-width:{MAX_W}; font-family:{base_font}; '
+        f'            font-size:15px; line-height:1.35; color:{TEXT_DARK};">'
+        f'{html}</div>'
+    )
+
+# Intro banner (first bot bubble)
+intro = ("Hi, I'm ALICIA. Here to help! Ask me anything about the "
          "program, mentorship, resources, and more. How can I help you today?")
-chat_log.insert(tk.END, f"╭──\n{intro}\n╰──\n", ("bot", "bubble_wrap"))
-chat_log.configure(state="disabled")    # lock it before normal use
+
+insert_bubble(intro, "bot")
 
 # ───────────── Entry & send button ─────────────
 input_frame = ttk.Frame(root)
@@ -328,26 +362,28 @@ def send_query():
         return
     entry.delete("1.0", tk.END)
 
-    def insert_bubble(text, tag):
-        chat_log.configure(state="normal")
-        chat_log.insert(tk.END, f"╭──\n{text}\n╰──\n", (tag, "bubble_wrap"))
-        chat_log.configure(state="disabled")
-        chat_log.see(tk.END)
-
-    insert_bubble(user_msg, "user")
+    insert_bubble(user_msg, "user")   # show the user’s text immediately
 
     def worker():
         try:
-            bot_reply = chat(user_msg)
+            bot_reply = chat(user_msg)      # your LLM function
         except Exception as e:
             bot_reply = f"[Error] {e}"
-        insert_bubble(bot_reply, "bot")
+        # update GUI safely from the main thread
+        root.after(0, lambda: insert_bubble(bot_reply, "bot"))
+
     threading.Thread(target=worker, daemon=True).start()
 
 ttk.Button(input_frame, text="Send", command=send_query)\
    .pack(side="right", padx=(12, 0), ipadx=10, ipady=6)
 
-entry.bind("<Return>", lambda e: send_query())
+def on_enter(event):
+    send_query()
+    return "break"        # prevents newline in the Text widget
+
+entry.bind("<Return>", on_enter)
 
 # ───────────── Launch ─────────────
 root.mainloop()
+
+
